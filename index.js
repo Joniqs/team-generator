@@ -7,8 +7,13 @@ const fs = require("fs");
 
 const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
+const outputCss = path.join(OUTPUT_DIR, "style.css");
 
 const render = require("./src/page-template.js");
+const renderCss = require("./src/css-template.js");
+
+// Array that will hold Employees objects
+const employeeArray = [];
 
 function init() {
     // Array of questions for Manager prompt
@@ -152,3 +157,44 @@ function addIntern() {
         showMenu();
     });
 }
+
+//Function that creates output folder
+function createFolder() {
+    const folderName = './output';
+  
+    try {
+    if (!fs.existsSync(folderName)) {
+        fs.mkdirSync(folderName);
+    }} catch (err) {
+    console.error(err);
+    }
+  }
+
+// Function that renders our team and create team.html
+function createTeam() {
+    // render our team using render function
+    const html = render(employeeArray);
+    const css = renderCss();
+    
+    //Create output folder before creatin html and css files.
+    createFolder();
+  
+    // write the rendered template to a file
+    fs.writeFile(outputPath, html, (err) => {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log(`Team saved to ${outputPath}`);
+      }
+    });
+
+    fs.writeFile(outputCss, css, (err) => {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log(`Styles generated to ${outputCss}`);
+      }
+    });
+  }
+
+init();
